@@ -73,14 +73,14 @@ Value ApiListener::ConfigUpdateObjectAPIHandler(const MessageOrigin::Ptr& origin
 
 	/* discard messages if the client is not configured on this node */
 	if (!endpoint) {
-		Log(LogNotice, "ApiListener")
+		Log(LogWarning, "ApiListener")
 		    << "Discarding 'config update object' message from '" << origin->FromClient->GetIdentity() << "': Invalid endpoint origin (client not allowed).";
 		return Empty;
 	}
 
 	/* discard messages if the sender is in a child zone */
 	if (!Zone::GetLocalZone()->IsChildOf(endpoint->GetZone())) {
-		Log(LogNotice, "ApiListener")
+		Log(LogWarning, "ApiListener")
 		    << "Discarding 'config update object' message from '"
 		    << origin->FromClient->GetIdentity() << "' for object '"
 		    << objName << "' of type '" << objType << "'. Sender is in a child zone.";
@@ -145,7 +145,7 @@ Value ApiListener::ConfigUpdateObjectAPIHandler(const MessageOrigin::Ptr& origin
 
 	/* update object attributes if version was changed or if this is a new object */
 	if (newObject || objVersion <= object->GetVersion()) {
-		Log(LogNotice, "ApiListener")
+		Log(LogInformation, "ApiListener")
 		    << "Discarding config update for object '" << object->GetName()
 		    << "': Object version " << std::fixed << object->GetVersion()
 		    << " is more recent than the received version " << std::fixed << objVersion << ".";
@@ -153,7 +153,7 @@ Value ApiListener::ConfigUpdateObjectAPIHandler(const MessageOrigin::Ptr& origin
 		return Empty;
 	}
 
-	Log(LogNotice, "ApiListener")
+	Log(LogInformation, "ApiListener")
 	    << "Processing config update for object '" << object->GetName()
 	    << "': Object version " << object->GetVersion()
 	    << " is older than the received version " << objVersion << ".";
@@ -219,7 +219,7 @@ Value ApiListener::ConfigDeleteObjectAPIHandler(const MessageOrigin::Ptr& origin
 	Endpoint::Ptr endpoint = origin->FromClient->GetEndpoint();
 
 	if (!endpoint) {
-		Log(LogNotice, "ApiListener")
+		Log(LogWarning, "ApiListener")
 		    << "Discarding 'config update object' message from '" << origin->FromClient->GetIdentity() << "': Invalid endpoint origin (client not allowed).";
 		return Empty;
 	}
@@ -245,7 +245,7 @@ Value ApiListener::ConfigDeleteObjectAPIHandler(const MessageOrigin::Ptr& origin
 	ConfigObject::Ptr object = ctype->GetObject(params->Get("name"));
 
 	if (!object) {
-		Log(LogNotice, "ApiListener")
+		Log(LogWarning, "ApiListener")
 		    << "Could not delete non-existent object '" << params->Get("name") << "' with type '" << params->Get("type") << "'.";
 		return Empty;
 	}
